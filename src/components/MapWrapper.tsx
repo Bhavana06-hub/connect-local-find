@@ -4,6 +4,7 @@ import { WiFiLocation } from "@/lib/types";
 import L from "leaflet";
 import { Wifi, Utensils, Library, Building2, Trees, Star, MapPin } from 'lucide-react';
 import { Button } from "./ui/button";
+import { useEffect } from "react";
 
 const typeIconClasses = {
     Cafe: 'bg-orange-500',
@@ -36,7 +37,9 @@ const createCustomIcon = (location: WiFiLocation) => {
 
 const ChangeView = ({ center, zoom }: { center: [number, number]; zoom: number }) => {
   const map = useMap();
-  map.setView(center, zoom);
+  useEffect(() => {
+    map.setView(center, zoom);
+  }, [center, zoom, map]);
   return null;
 };
 
