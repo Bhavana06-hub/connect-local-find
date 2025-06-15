@@ -2,7 +2,8 @@
 import { WiFiLocation } from "@/lib/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Clock, Star, Wifi, Utensils, Library, Building2, Trees } from "lucide-react";
+import { MapPin, Clock, Star, Wifi, Utensils, Library, Building2, Trees, Navigation } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const typeIcons = {
     Cafe: <Wifi className="w-4 h-4" />,
@@ -16,16 +17,21 @@ const typeIcons = {
 
 interface LocationCardProps {
   location: WiFiLocation;
-  onClick?: () => void;
 }
 
-const LocationCard = ({ location, onClick }: LocationCardProps) => {
+const LocationCard = ({ location }: LocationCardProps) => {
+  const handleGetDirections = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const { latitude, longitude } = location;
+    const url = `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`;
+    window.open(url, "_blank");
+  };
+
   return (
     <Card
-      className={`mb-3 cursor-pointer transition-all hover:shadow-xl hover:-translate-y-1 border-l-4 ${
+      className={`mb-3 transition-all hover:shadow-xl hover:-translate-y-1 border-l-4 ${
         location.isFree ? "border-green-500" : "border-yellow-500"
       }`}
-      onClick={onClick}
     >
       <CardContent className="p-4">
         <div className="flex justify-between items-start">
@@ -56,6 +62,10 @@ const LocationCard = ({ location, onClick }: LocationCardProps) => {
             {location.type}
           </Badge>
         </div>
+        <Button className="w-full mt-4" size="sm" onClick={handleGetDirections}>
+          <Navigation className="w-4 h-4 mr-2" />
+          Get Directions
+        </Button>
       </CardContent>
     </Card>
   );

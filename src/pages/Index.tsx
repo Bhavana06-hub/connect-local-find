@@ -7,7 +7,7 @@ import MapWrapper from "@/components/MapWrapper";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Search, Library, Utensils, Wifi, Building2, Trees } from "lucide-react";
+import { Search, Library, Utensils, Wifi } from "lucide-react";
 
 const filterTypes = [
   { label: "All", value: "all", icon: null },
@@ -21,7 +21,6 @@ const Index = () => {
   const [allLocations] = useState<WiFiLocation[]>(wifiSpots);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("all");
-  const [selectedLocation, setSelectedLocation] = useState<WiFiLocation | null>(null);
 
   const filteredLocations = useMemo(() => {
     return allLocations
@@ -85,7 +84,6 @@ const Index = () => {
                     <LocationCard
                       key={location.id}
                       location={location}
-                      onClick={() => setSelectedLocation(location)}
                     />
                   ))
                 ) : (
@@ -101,7 +99,7 @@ const Index = () => {
 
         {/* Right Panel (Map) */}
         <div className="col-span-1 md:col-span-2 lg:col-span-8 h-[60vh] md:h-[calc(100vh-10rem)]">
-          <MapWrapper locations={filteredLocations} selectedLocation={selectedLocation} />
+          <MapWrapper />
         </div>
       </div>
     </div>
