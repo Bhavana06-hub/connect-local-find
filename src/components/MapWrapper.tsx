@@ -1,11 +1,8 @@
-
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { WiFiLocation } from "@/lib/types";
 import L from "leaflet";
-import 'leaflet/dist/leaflet.css';
 import { Wifi, Utensils, Library, Building2, Trees, Star, MapPin } from 'lucide-react';
 import { Button } from "./ui/button";
-import { useEffect } from "react";
 
 const typeIconClasses = {
     Cafe: 'bg-orange-500',
@@ -24,7 +21,6 @@ const createCustomIcon = (location: WiFiLocation) => {
         case 'Cafe': icon = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-wifi"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" x2="12.01" y1="20" y2="20"/></svg>`; break;
         case 'Restaurant': icon = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-utensils"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3z"/></svg>`; break;
         case 'Library': icon = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-library"><path d="m16 6 4 14"/><path d="M12 6v14"/><path d="M8 8v12"/><path d="M4 4v16"/></svg>`; break;
-        // ... add other icons
         default: icon = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-wifi"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" x2="12.01" y1="20" y2="20"/></svg>`;
     }
     
@@ -35,14 +31,6 @@ const createCustomIcon = (location: WiFiLocation) => {
         iconAnchor: [15, 15]
     });
 }
-
-const ChangeView = ({ center, zoom }: { center: [number, number]; zoom: number }) => {
-  const map = useMap();
-  useEffect(() => {
-    map.setView(center, zoom);
-  }, [center, zoom, map]);
-  return null;
-};
 
 const getDirections = (lat: number, lng: number) => {
     const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
@@ -55,10 +43,11 @@ const MapWrapper = ({ locations, selectedLocation }: { locations: WiFiLocation[]
     : [17.3850, 78.4867];
   const zoom = selectedLocation ? 16 : 12;
 
+  const mapKey = selectedLocation ? selectedLocation.id : 'default-map';
+
   return (
     <div className="h-[calc(100vh-12rem)] md:h-full w-full rounded-lg">
-      <MapContainer center={position} zoom={zoom} scrollWheelZoom={true} className="h-full w-full">
-        <ChangeView center={position} zoom={zoom} />
+      <MapContainer key={mapKey} center={position} zoom={zoom} scrollWheelZoom={true} className="h-full w-full">
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
