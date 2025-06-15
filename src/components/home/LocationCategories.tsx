@@ -1,6 +1,6 @@
 
 import { Card, CardContent } from "@/components/ui/card";
-import { Library, Utensils, Wifi, Building, Park, ShoppingBag } from "lucide-react";
+import { Library, Utensils, Wifi, Building, Trees, ShoppingBag } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const categories = [
@@ -8,7 +8,7 @@ const categories = [
   { label: "Libraries", value: "Library", icon: <Library className="w-10 h-10 text-white" /> },
   { label: "Restaurants", value: "Restaurant", icon: <Utensils className="w-10 h-10 text-white" /> },
   { label: "Malls", value: "Mall", icon: <ShoppingBag className="w-10 h-10 text-white" /> },
-  { label: "Parks", value: "Park", icon: <Park className="w-10 h-10 text-white" /> },
+  { label: "Parks", value: "Park", icon: <Trees className="w-10 h-10 text-white" /> },
   { label: "Community Centers", value: "Community Center", icon: <Building className="w-10 h-10 text-white" /> },
 ];
 
