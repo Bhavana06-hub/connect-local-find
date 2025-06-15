@@ -2,6 +2,7 @@
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import { WiFiLocation } from "@/lib/types";
 import L from "leaflet";
+import 'leaflet/dist/leaflet.css';
 import { Wifi, Utensils, Library, Building2, Trees, Star, MapPin } from 'lucide-react';
 import { Button } from "./ui/button";
 import { useEffect } from "react";
