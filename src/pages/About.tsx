@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Wifi, Users, Globe } from "lucide-react";
 
@@ -10,14 +9,14 @@ const About = () => {
           <div className="mx-auto bg-primary text-primary-foreground rounded-full w-16 h-16 flex items-center justify-center mb-4">
             <Wifi className="w-8 h-8" />
           </div>
-          <h1 className="text-4xl font-bold tracking-tight">About ConnectLocal</h1>
+          <h1 className="text-4xl font-bold tracking-tight">About WifiLocator</h1>
           <p className="text-xl text-muted-foreground mt-2">
             Your guide to free and accessible WiFi anywhere.
           </p>
         </CardHeader>
         <CardContent className="max-w-4xl mx-auto text-lg text-foreground/80 space-y-6 py-10">
           <p>
-            <strong>ConnectLocal</strong> was born from a simple idea: internet access should be easy to find, whether you're a student, a remote worker, a traveler, or just someone looking to get online. In today's digital world, a reliable internet connection is not a luxury—it's a necessity. We believe that finding that connection shouldn't be a hassle.
+            <strong>WifiLocator</strong> was born from a simple idea: internet access should be easy to find, whether you're a student, a remote worker, a traveler, or just someone looking to get online. In today's digital world, a reliable internet connection is not a luxury—it's a necessity. We believe that finding that connection shouldn't be a hassle.
           </p>
           <p>
             Our mission is to create a community-driven map of all public WiFi hotspots, from bustling cafes and quiet libraries to public parks and transport hubs. We empower users to not only find WiFi spots but also to contribute by adding new locations, making our platform richer and more accurate for everyone.

@@ -1,4 +1,3 @@
-
 import { Link, NavLink } from "react-router-dom";
 import { Wifi, Menu, MapPin } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -17,7 +16,7 @@ const Header = () => {
       <div className="container flex h-16 items-center">
         <Link to="/" className="mr-6 flex items-center space-x-2">
           <Wifi className="h-6 w-6 text-white" />
-          <span className="font-bold text-white text-xl">ConnectLocal</span>
+          <span className="font-bold text-white text-xl">WifiLocator</span>
         </Link>
         <div className="hidden md:flex flex-1 items-center justify-between">
           <nav className="flex items-center gap-6 text-sm">
