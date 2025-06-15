@@ -10,7 +10,7 @@ const Hero = () => {
         Find Your Perfect WiFi Spot
       </h1>
       <p className="mt-4 text-lg md:text-xl text-white/80 max-w-3xl mx-auto drop-shadow-sm">
-        Discover free and reliable WiFi hotspots in Hyderabad. Whether you need a quiet library, a bustling cafe, or a comfy restaurant, we've got you covered.
+        Discover free and reliable WiFi hotspots in Visakhapatnam. Whether you need a quiet library, a bustling cafe, or a comfy restaurant, we've got you covered.
       </p>
       <div className="mt-8 flex justify-center gap-4">
         <Button asChild size="lg">

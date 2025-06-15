@@ -37,7 +37,7 @@ const Header = () => {
           <div className="flex items-center gap-4">
              <div className="flex items-center text-white/80 text-sm">
                 <MapPin className="h-4 w-4 mr-1" />
-                Hyderabad, India
+                Visakhapatnam, India
             </div>
             <Button asChild variant="secondary" size="sm">
               <Link to="/add-location">Add Location</Link>

@@ -13,7 +13,7 @@ const MapPlaceholder = () => {
     >
       <div className="bg-black/50 backdrop-blur-sm p-8 rounded-lg">
         <MapPin className="w-16 h-16 text-white/80 mx-auto mb-4" />
-        <h3 className="text-2xl font-semibold text-white">Map of Hyderabad</h3>
+        <h3 className="text-2xl font-semibold text-white">Map of Visakhapatnam</h3>
         <p className="text-white/70 mt-2 max-w-sm">
           Use the list on the left to find WiFi spots. Click "Get Directions" on any location card to open navigation in Google Maps.
         </p>
