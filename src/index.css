@@ -75,9 +75,10 @@
   }
 
   body {
-    @apply bg-background text-foreground;
-    background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+    @apply bg-background;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
     font-family: 'Inter', sans-serif;
+    color: hsl(var(--primary-foreground));
   }
 }
 

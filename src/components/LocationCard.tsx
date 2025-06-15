@@ -29,7 +29,7 @@ const LocationCard = ({ location }: LocationCardProps) => {
 
   return (
     <Card
-      className={`mb-3 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1.5 border-l-4 bg-white/50 dark:bg-slate-800/50 backdrop-blur-md ${
+      className={`mb-3 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1.5 border-l-4 bg-white/50 dark:bg-slate-800/50 backdrop-blur-md text-card-foreground ${
         location.isFree ? "border-green-400" : "border-amber-400"
       }`}
     >

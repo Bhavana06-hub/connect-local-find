@@ -5,7 +5,7 @@ import { Wifi, Users, Globe } from "lucide-react";
 const About = () => {
   return (
     <div className="container mx-auto p-4 md:p-8">
-      <Card className="bg-white/90 backdrop-blur-sm">
+      <Card className="bg-white/90 backdrop-blur-sm text-foreground">
         <CardHeader className="text-center">
           <div className="mx-auto bg-primary text-primary-foreground rounded-full w-16 h-16 flex items-center justify-center mb-4">
             <Wifi className="w-8 h-8" />

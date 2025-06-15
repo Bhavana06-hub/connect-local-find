@@ -21,7 +21,7 @@ const Contact = () => {
 
   return (
     <div className="container mx-auto p-4 md:p-8 flex justify-center">
-      <Card className="w-full max-w-2xl bg-white/90 backdrop-blur-sm">
+      <Card className="w-full max-w-2xl bg-white/90 backdrop-blur-sm text-foreground">
         <CardHeader className="text-center">
           <CardTitle className="text-3xl font-bold">Contact Us</CardTitle>
           <CardDescription>
