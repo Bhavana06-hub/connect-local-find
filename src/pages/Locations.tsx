@@ -6,7 +6,9 @@ import LocationCard from "@/components/LocationCard";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Search, Library, Utensils, Wifi } from "lucide-react";
+import { Search, Library, Utensils, Wifi, Locate, Loader2 } from "lucide-react";
+import { useGeolocation } from "@/hooks/useGeolocation";
+import { calculateDistance } from "@/lib/geolocation";
 
 const filterTypes = [
   { label: "All", value: "all", icon: null },
@@ -20,9 +22,25 @@ const Locations = () => {
   const [allLocations] = useState<WiFiLocation[]>(wifiSpots);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("all");
+  const [showNearbyOnly, setShowNearbyOnly] = useState(false);
+  const { location, isLoading, error, requestLocation } = useGeolocation();
+
+  const locationsWithDistance = useMemo(() => {
+    if (!location) return allLocations.map(loc => ({ ...loc, distance: undefined }));
+    
+    return allLocations.map(loc => ({
+      ...loc,
+      distance: calculateDistance(
+        location.latitude,
+        location.longitude,
+        loc.latitude,
+        loc.longitude
+      )
+    }));
+  }, [allLocations, location]);
 
   const filteredLocations = useMemo(() => {
-    return allLocations
+    let filtered = locationsWithDistance
       .filter((location) => {
         if (activeFilter === "all") return true;
         if (activeFilter === "free") return location.isFree;
@@ -32,7 +50,30 @@ const Locations = () => {
         location.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         location.address.toLowerCase().includes(searchQuery.toLowerCase())
       );
-  }, [allLocations, searchQuery, activeFilter]);
+
+    if (showNearbyOnly) {
+      filtered = filtered.filter(loc => loc.distance !== undefined && loc.distance <= 5);
+    }
+
+    // Sort by distance if location is available
+    if (location) {
+      filtered.sort((a, b) => {
+        if (a.distance === undefined) return 1;
+        if (b.distance === undefined) return -1;
+        return a.distance - b.distance;
+      });
+    }
+
+    return filtered;
+  }, [locationsWithDistance, searchQuery, activeFilter, showNearbyOnly, location]);
+
+  const handleNearbyClick = () => {
+    if (!location) {
+      requestLocation();
+    } else {
+      setShowNearbyOnly(!showNearbyOnly);
+    }
+  };
 
   return (
     <div className="container mx-auto p-4 md:p-8">
@@ -53,6 +94,20 @@ const Locations = () => {
               />
             </div>
             <div className="flex flex-wrap gap-2">
+              <Button
+                variant={showNearbyOnly ? "default" : "outline"}
+                size="sm"
+                onClick={handleNearbyClick}
+                disabled={isLoading}
+                className="flex items-center"
+              >
+                {isLoading ? (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                ) : (
+                  <Locate className="w-4 h-4 mr-2" />
+                )}
+                {!location ? "Find Nearby" : showNearbyOnly ? "Nearby (5km)" : "Show All"}
+              </Button>
               {filterTypes.map(filter => (
                  <Button
                     key={filter.value}
@@ -67,15 +122,25 @@ const Locations = () => {
             </div>
           </div>
 
+          {error && (
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md text-sm text-red-600">
+              {error}. Please check your browser settings and try again.
+            </div>
+          )}
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredLocations.length > 0 ? (
               filteredLocations.map((location) => (
-                <LocationCard key={location.id} location={location} />
+                <LocationCard 
+                  key={location.id} 
+                  location={location} 
+                  distance={location.distance}
+                />
               ))
             ) : (
               <div className="col-span-full text-center text-muted-foreground py-10">
                 <p>No locations found.</p>
-                <p className="text-sm">Try adjusting your filters.</p>
+                <p className="text-sm">Try adjusting your filters or search terms.</p>
               </div>
             )}
           </div>

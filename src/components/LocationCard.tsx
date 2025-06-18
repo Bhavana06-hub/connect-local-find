@@ -2,7 +2,7 @@
 import { WiFiLocation } from "@/lib/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Clock, Star, Wifi, Utensils, Library, Building2, Trees, Navigation } from "lucide-react";
+import { MapPin, Clock, Star, Wifi, Utensils, Library, Building2, Trees, Navigation, Locate } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const typeIcons = {
@@ -17,9 +17,10 @@ const typeIcons = {
 
 interface LocationCardProps {
   location: WiFiLocation;
+  distance?: number;
 }
 
-const LocationCard = ({ location }: LocationCardProps) => {
+const LocationCard = ({ location, distance }: LocationCardProps) => {
   const handleGetDirections = (e: React.MouseEvent) => {
     e.stopPropagation();
     const { latitude, longitude } = location;
@@ -45,6 +46,12 @@ const LocationCard = ({ location }: LocationCardProps) => {
               <Clock className="w-4 h-4 mr-2 flex-shrink-0" />
               {location.hours || "Not specified"}
             </p>
+            {distance !== undefined && (
+              <p className="text-sm text-primary flex items-center mt-1 font-medium">
+                <Locate className="w-4 h-4 mr-2 flex-shrink-0" />
+                {distance} km away
+              </p>
+            )}
           </div>
           <div className="flex flex-col items-end ml-4">
             <div className="flex items-center text-amber-500">
