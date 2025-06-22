@@ -4,11 +4,11 @@ import { Library, Utensils, Wifi, Locate, Loader2 } from "lucide-react";
 import { UserLocation } from "@/lib/geolocation";
 
 const filterTypes = [
-  { label: "All", value: "all", icon: null, color: "default" },
-  { label: "Free Only", value: "free", icon: null, color: "green" },
-  { label: "Libraries", value: "Library", icon: <Library className="w-4 h-4 mr-2" />, color: "blue" },
-  { label: "Cafes", value: "Cafe", icon: <Wifi className="w-4 h-4 mr-2" />, color: "purple" },
-  { label: "Restaurants", value: "Restaurant", icon: <Utensils className="w-4 h-4 mr-2" />, color: "orange" },
+  { label: "All", value: "all", icon: null },
+  { label: "Free", value: "free", icon: <Wifi className="w-4 h-4 mr-2" /> },
+  { label: "Libraries", value: "Library", icon: <Library className="w-4 h-4 mr-2" /> },
+  { label: "Cafes", value: "Cafe", icon: <Wifi className="w-4 h-4 mr-2" /> },
+  { label: "Restaurants", value: "Restaurant", icon: <Utensils className="w-4 h-4 mr-2" /> },
 ];
 
 interface QuickFiltersProps {
@@ -30,33 +30,25 @@ const QuickFilters = ({
   location,
   isLoading
 }: QuickFiltersProps) => {
-  const getFilterButtonClass = (isActive: boolean, color: string) => {
+  const getFilterButtonClass = (isActive: boolean) => {
     if (isActive) {
-      const colorClasses = {
-        default: "bg-primary text-primary-foreground shadow-lg",
-        green: "bg-green-500 text-white shadow-lg shadow-green-200",
-        blue: "bg-blue-500 text-white shadow-lg shadow-blue-200",
-        purple: "bg-purple-500 text-white shadow-lg shadow-purple-200",
-        orange: "bg-orange-500 text-white shadow-lg shadow-orange-200"
-      };
-      return `${colorClasses[color]} transform hover:scale-105`;
+      return "bg-blue-600 text-white shadow-md hover:bg-blue-700 transform hover:scale-105";
     }
-    return "bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 hover:border-primary hover:bg-gray-50 dark:hover:bg-gray-700 hover:scale-105 transform";
+    return "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-blue-600 hover:bg-blue-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transform hover:scale-105";
   };
 
   return (
-    <div className="space-y-4 mb-6">
+    <div className="space-y-6 mb-8">
       {/* Nearby Filter */}
       <div className="flex justify-center">
         <Button
           variant={showNearbyOnly ? "default" : "outline"}
-          size="sm"
           onClick={onNearbyClick}
           disabled={isLoading}
-          className={`transition-all duration-200 ${
+          className={`transition-all duration-200 px-6 py-3 rounded-xl font-medium ${
             showNearbyOnly 
-              ? "bg-primary shadow-lg hover:shadow-xl transform hover:scale-105" 
-              : "border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground hover:scale-105 transform"
+              ? "bg-blue-600 text-white shadow-md hover:bg-blue-700" 
+              : "border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
           }`}
         >
           {isLoading ? (
@@ -69,14 +61,13 @@ const QuickFilters = ({
       </div>
       
       {/* Category Filters */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
         {filterTypes.map(filter => (
           <Button
             key={filter.value}
             variant="outline"
-            size="sm"
             onClick={() => onFilterChange(filter.value)}
-            className={`transition-all duration-200 ${getFilterButtonClass(activeFilter === filter.value, filter.color)} font-medium`}
+            className={`transition-all duration-200 py-3 rounded-xl font-medium ${getFilterButtonClass(activeFilter === filter.value)}`}
           >
             {filter.icon}
             <span className="truncate">{filter.label}</span>

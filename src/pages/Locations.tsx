@@ -50,12 +50,10 @@ const Locations = () => {
   const filteredLocations = useMemo(() => {
     setIsLoadingLocations(true);
     
-    // Simulate loading delay for better UX
     setTimeout(() => setIsLoadingLocations(false), 300);
     
     let filtered = locationsWithDistance
       .filter((location) => {
-        // Basic filters
         if (activeFilter === "free") return location.isFree;
         if (activeFilter !== "all") return location.type === activeFilter;
         return true;
@@ -65,7 +63,6 @@ const Locations = () => {
         location.address.toLowerCase().includes(searchQuery.toLowerCase())
       );
 
-    // Advanced filters
     if (showNearbyOnly && location) {
       filtered = filtered.filter(loc => loc.distance !== undefined && loc.distance <= distanceRange);
     }
@@ -78,7 +75,6 @@ const Locations = () => {
       filtered = filtered.filter(loc => favorites.includes(loc.id));
     }
 
-    // Sort by distance if location is available
     if (location) {
       filtered.sort((a, b) => {
         if (a.distance === undefined) return 1;
@@ -100,13 +96,13 @@ const Locations = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-      <div className="container mx-auto p-4 md:p-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="container mx-auto p-6 md:p-12 max-w-7xl">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Enhanced Sidebar */}
-          <div className="lg:col-span-1 space-y-4">
-            <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg border-0 shadow-xl">
+          <div className="lg:col-span-1 space-y-6">
+            <Card className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-lg border-0 shadow-lg rounded-2xl">
               <LocationsHeader locationCount={filteredLocations.length} />
-              <CardContent className="space-y-6">
+              <CardContent className="space-y-8 px-6 pb-8">
                 <LocationsSearch 
                   searchQuery={searchQuery}
                   onSearchChange={setSearchQuery}
@@ -127,15 +123,13 @@ const Locations = () => {
                   isLoading={isLoading}
                 />
 
-                {/* Enhanced Advanced Filters Toggle */}
                 <Button
                   variant={showFilters ? "default" : "outline"}
-                  size="sm"
                   onClick={() => setShowFilters(!showFilters)}
-                  className={`w-full transition-all duration-200 ${
+                  className={`w-full transition-all duration-200 py-3 rounded-xl font-medium ${
                     showFilters 
-                      ? "bg-primary shadow-lg hover:shadow-xl transform hover:scale-105" 
-                      : "border-2 hover:border-primary hover:scale-105 transform"
+                      ? "bg-blue-600 text-white shadow-md hover:bg-blue-700" 
+                      : "border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
                   }`}
                 >
                   <Settings2 className="w-4 h-4 mr-2" />
@@ -157,17 +151,16 @@ const Locations = () => {
                 )}
 
                 {error && (
-                  <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl text-sm text-red-600 dark:text-red-400 animate-fade-in-up">
+                  <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl text-sm text-red-600 dark:text-red-400">
                     <strong>Location Error:</strong> {error}. Please check your browser settings and try again.
                   </div>
                 )}
               </CardContent>
             </Card>
 
-            {/* Enhanced Location List */}
             {!showMap && (
-              <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg border-0 shadow-xl">
-                <CardContent className="p-4">
+              <Card className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-lg border-0 shadow-lg rounded-2xl">
+                <CardContent className="p-6">
                   <LocationsList
                     locations={filteredLocations}
                     onLocationClick={setSelectedLocation}
@@ -182,7 +175,7 @@ const Locations = () => {
 
           {/* Enhanced Map/Content Area */}
           <div className="lg:col-span-2">
-            <div className="sticky top-4">
+            <div className="sticky top-6">
               <LocationsMainContent
                 showMap={showMap}
                 filteredLocations={filteredLocations}
@@ -193,7 +186,6 @@ const Locations = () => {
           </div>
         </div>
 
-        {/* Enhanced Location Details Modal */}
         <LocationDetailsModal
           location={selectedLocation}
           isOpen={!!selectedLocation}

@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { MapPin, Clock, Star, Wifi, Utensils, Library, Building2, Trees, Navigation, Locate, Heart, Zap, Users, Volume2 } from "lucide-react";
+import { MapPin, Clock, Star, Wifi, Utensils, Library, Building2, Trees, Navigation, Locate, Heart } from "lucide-react";
 
 const typeIcons = {
     Cafe: <Wifi className="w-4 h-4" />,
@@ -14,12 +14,6 @@ const typeIcons = {
     Park: <Trees className="w-4 h-4" />,
     Other: <Wifi className="w-4 h-4" />,
     'Community Center': <Library className="w-4 h-4" />,
-};
-
-const amenityIcons = {
-  'Power Outlets': <Zap className="w-3 h-3" />,
-  'Quiet': <Volume2 className="w-3 h-3" />,
-  'Seating': <Users className="w-3 h-3" />,
 };
 
 interface LocationCardProps {
@@ -32,19 +26,21 @@ interface LocationCardProps {
 }
 
 const LocationCardSkeleton = () => (
-  <Card className="mb-3 p-4">
-    <div className="space-y-3">
-      <div className="flex justify-between items-start">
-        <Skeleton className="h-6 w-48" />
-        <Skeleton className="h-8 w-8 rounded-full" />
+  <Card className="mb-4 overflow-hidden">
+    <CardContent className="p-6">
+      <div className="space-y-4">
+        <div className="flex justify-between items-start">
+          <Skeleton className="h-6 w-48" />
+          <Skeleton className="h-8 w-8 rounded-full" />
+        </div>
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-32" />
+        <div className="flex gap-2">
+          <Skeleton className="h-6 w-20" />
+          <Skeleton className="h-6 w-16" />
+        </div>
       </div>
-      <Skeleton className="h-4 w-full" />
-      <Skeleton className="h-4 w-32" />
-      <div className="flex gap-2">
-        <Skeleton className="h-6 w-16" />
-        <Skeleton className="h-6 w-20" />
-      </div>
-    </div>
+    </CardContent>
   </Card>
 );
 
@@ -69,27 +65,27 @@ const LocationCard = ({ location, distance, isFavorite, onToggleFavorite, onClic
 
   return (
     <Card
-      className={`group mb-3 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:scale-[1.02] cursor-pointer overflow-hidden ${
-        isFavorite ? "ring-2 ring-red-200 dark:ring-red-800" : ""
+      className={`group mb-4 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer overflow-hidden border-0 shadow-sm ${
+        isFavorite ? "ring-2 ring-red-100 bg-red-50/30" : "hover:shadow-xl"
       }`}
       onClick={onClick}
     >
-      {/* Colored accent bar */}
-      <div className={`h-1 w-full ${location.isFree ? "bg-gradient-to-r from-green-400 to-green-500" : "bg-gradient-to-r from-amber-400 to-orange-500"}`} />
+      {/* Clean accent bar */}
+      <div className={`h-1 w-full ${location.isFree ? "bg-green-500" : "bg-blue-500"}`} />
       
-      <CardContent className="p-5">
-        <div className="flex justify-between items-start mb-3">
+      <CardContent className="p-6">
+        <div className="flex justify-between items-start mb-4">
           <div className="flex-grow">
-            <h3 className="font-bold text-lg text-gray-900 dark:text-gray-100 group-hover:text-primary transition-colors">
+            <h3 className="font-semibold text-lg text-gray-900 dark:text-gray-100 mb-2 group-hover:text-blue-600 transition-colors">
               {location.name}
             </h3>
-            <div className="flex items-center mt-2">
-              <div className="flex items-center text-amber-500 mr-3">
+            <div className="flex items-center gap-4">
+              <div className="flex items-center text-amber-500">
                 <Star className="w-4 h-4 mr-1 fill-current" />
-                <span className="font-semibold text-sm">{location.rating.toFixed(1)}</span>
+                <span className="font-medium text-sm">{location.rating.toFixed(1)}</span>
               </div>
               {distance !== undefined && (
-                <div className="flex items-center text-primary font-medium text-sm">
+                <div className="flex items-center text-blue-600 font-medium text-sm">
                   <Locate className="w-4 h-4 mr-1" />
                   {distance} km
                 </div>
@@ -100,67 +96,47 @@ const LocationCard = ({ location, distance, isFavorite, onToggleFavorite, onClic
             variant="ghost"
             size="icon"
             onClick={handleToggleFavorite}
-            className={`h-9 w-9 transition-all duration-200 ${
-              isFavorite ? "text-red-500 scale-110" : "text-gray-400 hover:text-red-400"
-            } hover:scale-125`}
+            className={`h-10 w-10 transition-all duration-200 ${
+              isFavorite ? "text-red-500 hover:text-red-600" : "text-gray-400 hover:text-red-400"
+            }`}
           >
             <Heart className={`w-5 h-5 ${isFavorite ? 'fill-current' : ''}`} />
           </Button>
         </div>
 
-        <div className="space-y-2 mb-4">
+        <div className="space-y-3 mb-6">
           <p className="text-sm text-gray-600 dark:text-gray-300 flex items-center">
-            <MapPin className="w-4 h-4 mr-2 flex-shrink-0 text-gray-400" />
+            <MapPin className="w-4 h-4 mr-3 flex-shrink-0 text-gray-400" />
             {location.address}
           </p>
           <p className="text-sm text-gray-600 dark:text-gray-300 flex items-center">
-            <Clock className="w-4 h-4 mr-2 flex-shrink-0 text-gray-400" />
+            <Clock className="w-4 h-4 mr-3 flex-shrink-0 text-gray-400" />
             {location.hours || "Hours not specified"}
           </p>
         </div>
 
-        {/* Enhanced badges and amenities */}
-        <div className="flex items-center gap-2 mb-4 flex-wrap">
+        {/* Clean badges */}
+        <div className="flex items-center gap-3 mb-6">
           <Badge 
             variant={location.isFree ? "default" : "secondary"} 
             className={`${
               location.isFree 
-                ? "bg-green-500 hover:bg-green-600 text-white shadow-green-200 shadow-lg" 
-                : "bg-amber-400 hover:bg-amber-500 text-amber-900 shadow-amber-200 shadow-lg"
-            } transition-all duration-300 font-medium`}
+                ? "bg-green-500 hover:bg-green-600 text-white" 
+                : "bg-blue-500 hover:bg-blue-600 text-white"
+            } font-medium px-3 py-1`}
           >
             <Wifi className="w-3 h-3 mr-1" />
             {location.isFree ? "Free WiFi" : "Paid WiFi"}
           </Badge>
           
-          <Badge variant="outline" className="flex items-center gap-1 hover:bg-accent transition-colors border-gray-200 dark:border-gray-700">
+          <Badge variant="outline" className="flex items-center gap-1 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300">
             {typeIcons[location.type] || <Wifi className="w-4 h-4" />}
             <span className="text-xs font-medium">{location.type}</span>
           </Badge>
         </div>
 
-        {/* Amenities display */}
-        {location.amenities && location.amenities.length > 0 && (
-          <div className="mb-4">
-            <div className="flex gap-1 flex-wrap">
-              {location.amenities.slice(0, 3).map((amenity, index) => (
-                <Badge key={index} variant="outline" className="text-xs py-1 px-2 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700">
-                  {amenityIcons[amenity] && <span className="mr-1">{amenityIcons[amenity]}</span>}
-                  {amenity}
-                </Badge>
-              ))}
-              {location.amenities.length > 3 && (
-                <Badge variant="outline" className="text-xs py-1 px-2 bg-gray-50 dark:bg-gray-800">
-                  +{location.amenities.length - 3} more
-                </Badge>
-              )}
-            </div>
-          </div>
-        )}
-
         <Button 
-          className="w-full bg-primary/90 hover:bg-primary hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 font-medium" 
-          size="sm" 
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-all duration-200 hover:shadow-md" 
           onClick={handleGetDirections}
         >
           <Navigation className="w-4 h-4 mr-2" />
