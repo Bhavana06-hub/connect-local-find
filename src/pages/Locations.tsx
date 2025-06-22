@@ -2,25 +2,19 @@
 import { useState, useMemo } from "react";
 import { wifiSpots } from "@/data/wifi-spots";
 import { WiFiLocation } from "@/lib/types";
-import LocationCard from "@/components/LocationCard";
 import LocationDetailsModal from "@/components/LocationDetailsModal";
-import InteractiveMap from "@/components/InteractiveMap";
 import AdvancedFilters from "@/components/AdvancedFilters";
-import { Input } from "@/components/ui/input";
+import LocationsHeader from "@/components/LocationsHeader";
+import LocationsSearch from "@/components/LocationsSearch";
+import ViewToggle from "@/components/ViewToggle";
+import QuickFilters from "@/components/QuickFilters";
+import LocationsList from "@/components/LocationsList";
+import LocationsMainContent from "@/components/LocationsMainContent";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Search, Library, Utensils, Wifi, Locate, Loader2, Map, List } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 import { useGeolocation } from "@/hooks/useGeolocation";
 import { useFavorites } from "@/hooks/useFavorites";
 import { calculateDistance } from "@/lib/geolocation";
-
-const filterTypes = [
-  { label: "All", value: "all", icon: null },
-  { label: "Free Only", value: "free", icon: null },
-  { label: "Libraries", value: "Library", icon: <Library className="w-4 h-4 mr-2" /> },
-  { label: "Cafes", value: "Cafe", icon: <Wifi className="w-4 h-4 mr-2" /> },
-  { label: "Restaurants", value: "Restaurant", icon: <Utensils className="w-4 h-4 mr-2" /> },
-];
 
 const Locations = () => {
   const [allLocations] = useState<WiFiLocation[]>(wifiSpots);
@@ -103,75 +97,27 @@ const Locations = () => {
         {/* Sidebar */}
         <div className="lg:col-span-1 space-y-4">
           <Card className="bg-white/90 backdrop-blur-sm">
-            <CardHeader>
-              <CardTitle className="text-2xl font-bold tracking-tight">WiFi Locations</CardTitle>
-              <p className="text-muted-foreground">
-                Found {filteredLocations.length} location{filteredLocations.length !== 1 ? 's' : ''}
-              </p>
-            </CardHeader>
+            <LocationsHeader locationCount={filteredLocations.length} />
             <CardContent>
-              {/* Search */}
-              <div className="relative mb-4">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search locations..."
-                  className="pl-10"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
+              <LocationsSearch 
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+              />
 
-              {/* View Toggle */}
-              <div className="flex gap-2 mb-4">
-                <Button
-                  variant={!showMap ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setShowMap(false)}
-                  className="flex-1"
-                >
-                  <List className="w-4 h-4 mr-2" />
-                  List
-                </Button>
-                <Button
-                  variant={showMap ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setShowMap(true)}
-                  className="flex-1"
-                >
-                  <Map className="w-4 h-4 mr-2" />
-                  Map
-                </Button>
-              </div>
+              <ViewToggle 
+                showMap={showMap}
+                onToggleView={setShowMap}
+              />
 
-              {/* Quick Filters */}
-              <div className="flex flex-wrap gap-2 mb-4">
-                <Button
-                  variant={showNearbyOnly ? "default" : "outline"}
-                  size="sm"
-                  onClick={handleNearbyClick}
-                  disabled={isLoading}
-                  className="flex items-center"
-                >
-                  {isLoading ? (
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  ) : (
-                    <Locate className="w-4 h-4 mr-2" />
-                  )}
-                  {!location ? "Find Nearby" : showNearbyOnly ? `Within ${distanceRange}km` : "Show All"}
-                </Button>
-                
-                {filterTypes.map(filter => (
-                  <Button
-                    key={filter.value}
-                    variant={activeFilter === filter.value ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setActiveFilter(filter.value)}
-                    className="flex items-center"
-                  >
-                    {filter.icon} {filter.label}
-                  </Button>
-                ))}
-              </div>
+              <QuickFilters
+                activeFilter={activeFilter}
+                onFilterChange={setActiveFilter}
+                showNearbyOnly={showNearbyOnly}
+                onNearbyClick={handleNearbyClick}
+                distanceRange={distanceRange}
+                location={location}
+                isLoading={isLoading}
+              />
 
               {/* Advanced Filters Toggle */}
               <Button
@@ -205,57 +151,23 @@ const Locations = () => {
 
           {/* Location List */}
           {!showMap && (
-            <div className="max-h-[600px] overflow-y-auto space-y-3">
-              {filteredLocations.length > 0 ? (
-                filteredLocations.map((location) => (
-                  <LocationCard 
-                    key={location.id} 
-                    location={location} 
-                    distance={location.distance}
-                    isFavorite={isFavorite(location.id)}
-                    onToggleFavorite={toggleFavorite}
-                    onClick={() => setSelectedLocation(location)}
-                  />
-                ))
-              ) : (
-                <div className="text-center text-muted-foreground py-10">
-                  <p>No locations found.</p>
-                  <p className="text-sm">Try adjusting your filters or search terms.</p>
-                </div>
-              )}
-            </div>
+            <LocationsList
+              locations={filteredLocations}
+              onLocationClick={setSelectedLocation}
+              isFavorite={isFavorite}
+              onToggleFavorite={toggleFavorite}
+            />
           )}
         </div>
 
         {/* Map */}
         <div className="lg:col-span-2">
-          <Card className="h-[600px] lg:h-[calc(100vh-8rem)]">
-            <CardContent className="p-0 h-full">
-              {showMap ? (
-                <InteractiveMap
-                  locations={filteredLocations}
-                  userLocation={location}
-                  onLocationSelect={setSelectedLocation}
-                />
-              ) : (
-                <div className="h-full flex flex-col">
-                  <div className="p-4 border-b">
-                    <h3 className="font-semibold">Location Details</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Click on any location card to view details, or switch to map view
-                    </p>
-                  </div>
-                  <div className="flex-1 flex items-center justify-center">
-                    <div className="text-center text-muted-foreground">
-                      <Map className="w-16 h-16 mx-auto mb-4 opacity-50" />
-                      <p>Select a location to view details</p>
-                      <p className="text-sm">or switch to map view to see all locations</p>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+          <LocationsMainContent
+            showMap={showMap}
+            filteredLocations={filteredLocations}
+            userLocation={location}
+            onLocationSelect={setSelectedLocation}
+          />
         </div>
       </div>
 
