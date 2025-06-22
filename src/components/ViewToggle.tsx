@@ -9,24 +9,32 @@ interface ViewToggleProps {
 
 const ViewToggle = ({ showMap, onToggleView }: ViewToggleProps) => {
   return (
-    <div className="flex gap-2 mb-4">
+    <div className="flex gap-1 mb-6 p-1 bg-gray-100 dark:bg-gray-800 rounded-xl">
       <Button
-        variant={!showMap ? "default" : "outline"}
+        variant={!showMap ? "default" : "ghost"}
         size="sm"
         onClick={() => onToggleView(false)}
-        className="flex-1"
+        className={`flex-1 transition-all duration-200 rounded-lg ${
+          !showMap 
+            ? "bg-white dark:bg-gray-900 shadow-md hover:shadow-lg transform hover:-translate-y-0.5" 
+            : "hover:bg-gray-200 dark:hover:bg-gray-700"
+        }`}
       >
         <List className="w-4 h-4 mr-2" />
-        List
+        List View
       </Button>
       <Button
-        variant={showMap ? "default" : "outline"}
+        variant={showMap ? "default" : "ghost"}
         size="sm"
         onClick={() => onToggleView(true)}
-        className="flex-1"
+        className={`flex-1 transition-all duration-200 rounded-lg ${
+          showMap 
+            ? "bg-white dark:bg-gray-900 shadow-md hover:shadow-lg transform hover:-translate-y-0.5" 
+            : "hover:bg-gray-200 dark:hover:bg-gray-700"
+        }`}
       >
         <Map className="w-4 h-4 mr-2" />
-        Map
+        Map View
       </Button>
     </div>
   );
