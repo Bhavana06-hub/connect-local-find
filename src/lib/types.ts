@@ -10,4 +10,5 @@ export interface WiFiLocation {
   hours: string;
   amenities: string[];
   rating: number;
+  distance?: number; // Optional distance property
 }

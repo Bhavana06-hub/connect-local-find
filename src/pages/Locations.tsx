@@ -38,7 +38,7 @@ const Locations = () => {
   const { favorites, toggleFavorite, isFavorite } = useFavorites();
 
   const locationsWithDistance = useMemo(() => {
-    if (!location) return allLocations.map(loc => ({ ...loc, distance: undefined }));
+    if (!location) return allLocations;
     
     return allLocations.map(loc => ({
       ...loc,
