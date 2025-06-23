@@ -76,7 +76,7 @@
 
   body {
     @apply bg-background text-foreground;
-    background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 50%, #faf5ff 100%);
+    background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 50%, #fefefe 100%);
     font-family: 'Inter', sans-serif;
     font-feature-settings: 'cv11', 'ss01';
     font-variation-settings: 'opsz' 32;
