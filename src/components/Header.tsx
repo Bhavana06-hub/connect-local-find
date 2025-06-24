@@ -1,7 +1,11 @@
+
 import { Link, NavLink } from "react-router-dom";
-import { Wifi, Menu, MapPin } from "lucide-react";
+import { Wifi, Menu, MapPin, User, LogOut } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 
 const navItems = [
   { label: "Home", to: "/" },
@@ -11,6 +15,25 @@ const navItems = [
 ];
 
 const Header = () => {
+  const { user, signOut } = useAuth();
+  const { toast } = useToast();
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      toast({
+        title: "Signed out",
+        description: "You have been successfully signed out.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to sign out. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-gradient-to-r from-[#1e3c72] to-[#2a5298] shadow-lg backdrop-blur-lg">
       <div className="container flex h-16 items-center">
@@ -39,9 +62,39 @@ const Header = () => {
                 <MapPin className="h-4 w-4 mr-1" />
                 Visakhapatnam, India
             </div>
-            <Button asChild variant="secondary" size="sm">
-              <Link to="/add-location">Add Location</Link>
-            </Button>
+            {user ? (
+              <>
+                <Button asChild variant="secondary" size="sm">
+                  <Link to="/add-location">Add Location</Link>
+                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
+                      <User className="h-5 w-5" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-48">
+                    <DropdownMenuItem className="flex items-center">
+                      <User className="h-4 w-4 mr-2" />
+                      {user.email}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleSignOut} className="flex items-center text-red-600">
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Sign Out
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </>
+            ) : (
+              <>
+                <Button asChild variant="ghost" size="sm" className="text-white hover:bg-white/10">
+                  <Link to="/auth">Sign In</Link>
+                </Button>
+                <Button asChild variant="secondary" size="sm">
+                  <Link to="/auth">Sign Up</Link>
+                </Button>
+              </>
+            )}
           </div>
         </div>
         <div className="flex flex-1 items-center justify-end md:hidden">
@@ -64,9 +117,28 @@ const Header = () => {
                   </NavLink>
                 ))}
                 <hr className="my-2"/>
-                <Button asChild>
-                    <Link to="/add-location">Add Location</Link>
-                </Button>
+                {user ? (
+                  <>
+                    <div className="text-sm text-gray-600 px-2">
+                      Signed in as: {user.email}
+                    </div>
+                    <Button asChild>
+                      <Link to="/add-location">Add Location</Link>
+                    </Button>
+                    <Button variant="outline" onClick={handleSignOut}>
+                      Sign Out
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button asChild>
+                      <Link to="/auth">Sign In</Link>
+                    </Button>
+                    <Button asChild variant="outline">
+                      <Link to="/auth">Sign Up</Link>
+                    </Button>
+                  </>
+                )}
               </div>
             </SheetContent>
           </Sheet>
