@@ -1,5 +1,4 @@
-
-import { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import { wifiSpots } from "@/data/wifi-spots";
 import { WiFiLocation } from "@/lib/types";
 import { RealWiFiHotspot } from "@/lib/wifiApi";
@@ -14,6 +13,7 @@ import { calculateDistance } from "@/lib/geolocation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MapPin, List, Satellite } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const Locations = () => {
   const [allLocations] = useState<WiFiLocation[]>(wifiSpots);

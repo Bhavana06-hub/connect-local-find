@@ -1,11 +1,10 @@
-
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { useState } from "react";
 import { Wifi, MapPin, Key, Loader2, Satellite, Clock } from "lucide-react";
 import { useRealTimeWiFi } from "@/hooks/useRealTimeWiFi";
 import { UserLocation } from "@/lib/geolocation";
