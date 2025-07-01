@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -5,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Wifi, MapPin, Key, Loader2, Satellite, Clock } from "lucide-react";
+import { Wifi, MapPin, Key, Loader2, Satellite, Clock, AlertCircle } from "lucide-react";
 import { useRealTimeWiFi } from "@/hooks/useRealTimeWiFi";
 import { UserLocation } from "@/lib/geolocation";
 
@@ -59,13 +60,13 @@ const RealTimeWiFiControls = ({ userLocation, onHotspotsUpdate }: RealTimeWiFiCo
         {!hasWigleApiKey && (
           <div className="space-y-3">
             <Label htmlFor="wigle-api">
-              Wigle.net API Key (Optional - for more data)
+              Wigle.net API Key (Format: username:password)
             </Label>
             <div className="flex gap-2">
               <Input
                 id="wigle-api"
                 type="password"
-                placeholder="Enter your Wigle.net API key"
+                placeholder="username:password"
                 value={apiKey}
                 onChange={(e) => setApiKey(e.target.value)}
               />
@@ -74,17 +75,23 @@ const RealTimeWiFiControls = ({ userLocation, onHotspotsUpdate }: RealTimeWiFiCo
                 Save
               </Button>
             </div>
-            <p className="text-xs text-muted-foreground">
-              Get your free API key from{" "}
-              <a 
-                href="https://wigle.net/account" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:underline"
-              >
-                wigle.net/account
-              </a>
-            </p>
+            <div className="text-xs text-muted-foreground space-y-1">
+              <p>
+                Get your free API key from{" "}
+                <a 
+                  href="https://wigle.net/account" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:underline"
+                >
+                  wigle.net/account
+                </a>
+              </p>
+              <p className="flex items-center gap-1">
+                <AlertCircle className="w-3 h-3" />
+                Format: username:password (e.g., myuser:mypass)
+              </p>
+            </div>
             <Separator />
           </div>
         )}
@@ -92,7 +99,7 @@ const RealTimeWiFiControls = ({ userLocation, onHotspotsUpdate }: RealTimeWiFiCo
         {/* Status */}
         <div className="flex items-center gap-4">
           <Badge variant={hasWigleApiKey ? "default" : "secondary"}>
-            {hasWigleApiKey ? "Wigle API: Connected" : "Using OpenWiFiMap only"}
+            {hasWigleApiKey ? "Wigle API: Connected" : "Using fallback data only"}
           </Badge>
           {lastUpdated && (
             <div className="flex items-center gap-1 text-xs text-muted-foreground">
@@ -100,6 +107,21 @@ const RealTimeWiFiControls = ({ userLocation, onHotspotsUpdate }: RealTimeWiFiCo
               {lastUpdated.toLocaleTimeString()}
             </div>
           )}
+        </div>
+
+        {/* Info box */}
+        <div className="bg-blue-50 p-3 rounded-lg">
+          <div className="flex items-start gap-2">
+            <AlertCircle className="w-4 h-4 text-blue-600 mt-0.5" />
+            <div className="text-sm text-blue-800">
+              <p className="font-medium">How it works:</p>
+              <ul className="mt-1 space-y-1 text-xs">
+                <li>• Without API key: Shows demo data and OpenStreetMap WiFi spots</li>
+                <li>• With Wigle API: Gets real crowdsourced WiFi hotspot data</li>
+                <li>• OpenWiFiMap: Public places with free WiFi from OpenStreetMap</li>
+              </ul>
+            </div>
+          </div>
         </div>
 
         {/* Fetch Button */}
