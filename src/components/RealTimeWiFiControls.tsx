@@ -2,11 +2,9 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Wifi, MapPin, Key, Loader2, Satellite, Clock, AlertCircle } from "lucide-react";
+import { Wifi, MapPin, Loader2, Satellite, Clock, AlertCircle, Shield } from "lucide-react";
 import { useRealTimeWiFi } from "@/hooks/useRealTimeWiFi";
 import { UserLocation } from "@/lib/geolocation";
 
@@ -16,23 +14,14 @@ interface RealTimeWiFiControlsProps {
 }
 
 const RealTimeWiFiControls = ({ userLocation, onHotspotsUpdate }: RealTimeWiFiControlsProps) => {
-  const [apiKey, setApiKey] = useState("");
   const { 
     hotspots, 
     isLoading, 
     error, 
     lastUpdated,
-    fetchNearbyHotspots, 
-    configureWigleApi, 
+    fetchNearbyHotspots,
     hasWigleApiKey 
   } = useRealTimeWiFi();
-
-  const handleConfigureApi = () => {
-    if (apiKey.trim()) {
-      configureWigleApi(apiKey.trim());
-      setApiKey("");
-    }
-  };
 
   const handleFetchHotspots = async () => {
     if (!userLocation) {
@@ -56,50 +45,11 @@ const RealTimeWiFiControls = ({ userLocation, onHotspotsUpdate }: RealTimeWiFiCo
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* API Configuration */}
-        {!hasWigleApiKey && (
-          <div className="space-y-3">
-            <Label htmlFor="wigle-api">
-              Wigle.net API Key (Format: username:password)
-            </Label>
-            <div className="flex gap-2">
-              <Input
-                id="wigle-api"
-                type="password"
-                placeholder="username:password"
-                value={apiKey}
-                onChange={(e) => setApiKey(e.target.value)}
-              />
-              <Button onClick={handleConfigureApi} size="sm">
-                <Key className="w-4 h-4 mr-1" />
-                Save
-              </Button>
-            </div>
-            <div className="text-xs text-muted-foreground space-y-1">
-              <p>
-                Get your free API key from{" "}
-                <a 
-                  href="https://wigle.net/account" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-blue-600 hover:underline"
-                >
-                  wigle.net/account
-                </a>
-              </p>
-              <p className="flex items-center gap-1">
-                <AlertCircle className="w-3 h-3" />
-                Format: username:password (e.g., myuser:mypass)
-              </p>
-            </div>
-            <Separator />
-          </div>
-        )}
-
         {/* Status */}
         <div className="flex items-center gap-4">
-          <Badge variant={hasWigleApiKey ? "default" : "secondary"}>
-            {hasWigleApiKey ? "Wigle API: Connected" : "Using fallback data only"}
+          <Badge variant="default" className="flex items-center gap-1">
+            <Shield className="w-3 h-3" />
+            Secure Backend API
           </Badge>
           {lastUpdated && (
             <div className="flex items-center gap-1 text-xs text-muted-foreground">
@@ -109,6 +59,8 @@ const RealTimeWiFiControls = ({ userLocation, onHotspotsUpdate }: RealTimeWiFiCo
           )}
         </div>
 
+        <Separator />
+
         {/* Info box */}
         <div className="bg-blue-50 p-3 rounded-lg">
           <div className="flex items-start gap-2">
@@ -116,9 +68,10 @@ const RealTimeWiFiControls = ({ userLocation, onHotspotsUpdate }: RealTimeWiFiCo
             <div className="text-sm text-blue-800">
               <p className="font-medium">How it works:</p>
               <ul className="mt-1 space-y-1 text-xs">
-                <li>• Without API key: Shows demo data and OpenStreetMap WiFi spots</li>
-                <li>• With Wigle API: Gets real crowdsourced WiFi hotspot data</li>
-                <li>• OpenWiFiMap: Public places with free WiFi from OpenStreetMap</li>
+                <li>• <strong>Secure API:</strong> WiGLE API calls are made through our secure backend</li>
+                <li>• <strong>Real Data:</strong> Gets live crowdsourced WiFi hotspot data from WiGLE.net</li>
+                <li>• <strong>OpenWiFiMap:</strong> Also includes public WiFi spots from OpenStreetMap</li>
+                <li>• <strong>Privacy:</strong> Your API credentials are safely stored server-side</li>
               </ul>
             </div>
           </div>

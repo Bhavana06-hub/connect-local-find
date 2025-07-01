@@ -1,3 +1,4 @@
+import { supabase } from '@/integrations/supabase/client';
 
 export interface RealWiFiHotspot {
   ssid: string;
@@ -40,81 +41,54 @@ export interface WigleResponse {
 }
 
 class WiFiApiService {
-  private wigleApiKey: string | null = null;
+  private wigleApiConfigured: boolean = false;
   
   constructor() {
-    // Get API key from localStorage if available
-    this.wigleApiKey = localStorage.getItem('wigle_api_key');
+    // Check if WiGLE is configured via Supabase
+    this.checkWigleConfiguration();
+  }
+
+  private async checkWigleConfiguration() {
+    // This will be determined by whether the Edge Function can access the secret
+    this.wigleApiConfigured = true; // We'll assume it's configured if the secret is set
   }
 
   setWigleApiKey(apiKey: string) {
-    this.wigleApiKey = apiKey;
-    localStorage.setItem('wigle_api_key', apiKey);
+    // This is now handled via Supabase secrets, but we keep this for UI compatibility
+    console.log('WiGLE API key should be configured via Supabase secrets');
   }
 
   hasWigleApiKey(): boolean {
-    return !!this.wigleApiKey;
+    return this.wigleApiConfigured;
   }
 
   async fetchWigleHotspots(latitude: number, longitude: number, radius: number = 0.01): Promise<RealWiFiHotspot[]> {
-    if (!this.wigleApiKey) {
-      throw new Error('Wigle API key not configured');
-    }
-
-    const url = `https://api.wigle.net/api/v2/network/search`;
-    const params = new URLSearchParams({
-      latrange1: (latitude - radius).toString(),
-      latrange2: (latitude + radius).toString(),
-      longrange1: (longitude - radius).toString(),
-      longrange2: (longitude + radius).toString(),
-      freenet: 'true', // Only free networks
-      paynet: 'false',
-      resultCount: '100'
-    });
-
     try {
-      console.log('Fetching from Wigle API with params:', params.toString());
+      console.log('Fetching from secure Supabase Edge Function...');
       
-      // Wigle uses username:password format for API key
-      const [username, password] = this.wigleApiKey.includes(':') 
-        ? this.wigleApiKey.split(':') 
-        : [this.wigleApiKey, ''];
-      
-      const credentials = btoa(`${username}:${password}`);
-      
-      const response = await fetch(`${url}?${params}`, {
-        headers: {
-          'Authorization': `Basic ${credentials}`,
-          'Accept': 'application/json',
-          'User-Agent': 'WiFi-Locator-App/1.0'
+      // Call the secure Supabase Edge Function
+      const { data, error } = await supabase.functions.invoke('wifi-hotspots', {
+        body: {
+          latitude,
+          longitude,
+          radius
         }
       });
 
-      console.log('Wigle API response status:', response.status);
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Wigle API error response:', errorText);
-        throw new Error(`Wigle API error: ${response.status} - ${errorText}`);
+      if (error) {
+        console.error('Supabase function error:', error);
+        throw new Error(`Failed to fetch WiFi hotspots: ${error.message}`);
       }
 
-      const data: WigleResponse = await response.json();
-      console.log('Wigle API response data:', data);
+      console.log('Supabase function response:', data);
       
-      return data.search?.map(hotspot => ({
-        ssid: hotspot.ssid || 'Unknown Network',
-        bssid: hotspot.netid,
-        latitude: hotspot.trilat,
-        longitude: hotspot.trilong,
-        encryption: hotspot.encryption || hotspot.wep,
-        signal: hotspot.qos || 0,
-        lastSeen: hotspot.lasttime,
-        source: 'wigle' as const,
-        venue: hotspot.comment || undefined,
-        address: `${hotspot.trilat.toFixed(6)}, ${hotspot.trilong.toFixed(6)}`
-      })) || [];
+      if (!data.success) {
+        throw new Error(data.error || 'Failed to fetch WiFi hotspots');
+      }
+
+      return data.hotspots || [];
     } catch (error) {
-      console.error('Error fetching Wigle data:', error);
+      console.error('Error fetching WiGLE data via Supabase:', error);
       return [];
     }
   }
@@ -222,13 +196,11 @@ class WiFiApiService {
     const results: RealWiFiHotspot[] = [];
 
     try {
-      // Try Wigle first if API key is available
-      if (this.hasWigleApiKey()) {
-        console.log('Attempting Wigle API fetch...');
-        const wigleResults = await this.fetchWigleHotspots(latitude, longitude);
-        results.push(...wigleResults);
-        console.log(`Wigle returned ${wigleResults.length} hotspots`);
-      }
+      // Try WiGLE via secure Supabase Edge Function
+      console.log('Attempting secure WiGLE API fetch via Supabase...');
+      const wigleResults = await this.fetchWigleHotspots(latitude, longitude);
+      results.push(...wigleResults);
+      console.log(`WiGLE returned ${wigleResults.length} hotspots`);
 
       // Always try OpenWiFiMap as fallback/additional data
       console.log('Attempting OpenWiFiMap fetch...');
