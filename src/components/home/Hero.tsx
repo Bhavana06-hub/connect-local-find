@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Map } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Hero = () => {
@@ -12,15 +12,10 @@ const Hero = () => {
       <p className="mt-4 text-lg md:text-xl text-white/80 max-w-3xl mx-auto drop-shadow-sm">
         Discover free and reliable WiFi hotspots in Visakhapatnam. Whether you need a quiet library, a bustling cafe, or a comfy restaurant, we've got you covered.
       </p>
-      <div className="mt-8 flex justify-center gap-4">
+      <div className="mt-8 flex justify-center">
         <Button asChild size="lg">
           <Link to="/locations">
             Explore Locations <ArrowRight className="ml-2 h-5 w-5" />
-          </Link>
-        </Button>
-        <Button asChild variant="secondary" size="lg">
-          <Link to="/add-location">
-            <Map className="mr-2 h-5 w-5" /> Add a Spot
           </Link>
         </Button>
       </div>
