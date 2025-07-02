@@ -1,148 +1,96 @@
 
-import { Link, NavLink } from "react-router-dom";
-import { Wifi, Menu, MapPin, User, LogOut } from "lucide-react";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { Menu, X, Wifi } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { useAuth } from "@/contexts/AuthContext";
-import { useToast } from "@/hooks/use-toast";
-
-const navItems = [
-  { label: "Home", to: "/" },
-  { label: "Locations", to: "/locations" },
-  { label: "About", to: "/about" },
-  { label: "Contact", to: "/contact" },
-];
 
 const Header = () => {
-  const { user, signOut } = useAuth();
-  const { toast } = useToast();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const location = useLocation();
 
-  const handleSignOut = async () => {
-    try {
-      await signOut();
-      toast({
-        title: "Signed out",
-        description: "You have been successfully signed out.",
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to sign out. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
+  const navigation = [
+    { name: "Home", href: "/" },
+    { name: "Locations", href: "/locations" },
+    { name: "About", href: "/about" },
+    { name: "Contact", href: "/contact" },
+  ];
+
+  const isActive = (path: string) => location.pathname === path;
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-gradient-to-r from-[#1e3c72] to-[#2a5298] shadow-lg backdrop-blur-lg">
-      <div className="container flex h-16 items-center">
-        <Link to="/" className="mr-6 flex items-center space-x-2">
-          <Wifi className="h-6 w-6 text-white" />
-          <span className="font-bold text-white text-xl">WifiLocator</span>
-        </Link>
-        <div className="hidden md:flex flex-1 items-center justify-between">
-          <nav className="flex items-center gap-6 text-sm">
-            {navItems.map((item) => (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                className={({ isActive }) =>
-                  `transition-colors hover:text-white/80 ${
-                    isActive ? "text-white font-semibold" : "text-white/60"
-                  }`
-                }
+    <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+      <div className="container mx-auto px-6">
+        <div className="flex justify-between items-center h-16">
+          {/* Logo */}
+          <Link to="/" className="flex items-center space-x-2">
+            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+              <Wifi className="w-5 h-5 text-white" />
+            </div>
+            <span className="text-xl font-bold text-gray-900">WiFinder</span>
+          </Link>
+
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center space-x-8">
+            {navigation.map((item) => (
+              <Link
+                key={item.name}
+                to={item.href}
+                className={`text-sm font-medium transition-colors hover:text-blue-600 ${
+                  isActive(item.href)
+                    ? "text-blue-600 border-b-2 border-blue-600 pb-1"
+                    : "text-gray-700"
+                }`}
               >
-                {item.label}
-              </NavLink>
+                {item.name}
+              </Link>
             ))}
           </nav>
-          <div className="flex items-center gap-4">
-             <div className="flex items-center text-white/80 text-sm">
-                <MapPin className="h-4 w-4 mr-1" />
-                Visakhapatnam, India
-            </div>
-            {user ? (
-              <>
-                <Button asChild variant="secondary" size="sm">
-                  <Link to="/add-location">Add Location</Link>
-                </Button>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
-                      <User className="h-5 w-5" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-48">
-                    <DropdownMenuItem className="flex items-center">
-                      <User className="h-4 w-4 mr-2" />
-                      {user.email}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={handleSignOut} className="flex items-center text-red-600">
-                      <LogOut className="h-4 w-4 mr-2" />
-                      Sign Out
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </>
-            ) : (
-              <>
-                <Button asChild variant="ghost" size="sm" className="text-white hover:bg-white/10">
-                  <Link to="/auth">Sign In</Link>
-                </Button>
-                <Button asChild variant="secondary" size="sm">
-                  <Link to="/auth">Sign Up</Link>
-                </Button>
-              </>
-            )}
+
+          {/* Desktop Auth Button */}
+          <div className="hidden md:flex items-center space-x-4">
+            <Button asChild variant="outline">
+              <Link to="/auth">Sign In</Link>
+            </Button>
+          </div>
+
+          {/* Mobile menu button */}
+          <div className="md:hidden">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+              {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </Button>
           </div>
         </div>
-        <div className="flex flex-1 items-center justify-end md:hidden">
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="text-white">
-                <Menu className="h-6 w-6" />
-                <span className="sr-only">Toggle Menu</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="right">
-              <div className="grid gap-4 py-6">
-                {navItems.map((item) => (
-                  <NavLink
-                    key={item.to}
-                    to={item.to}
-                    className="flex w-full items-center py-2 text-lg font-semibold"
-                  >
-                    {item.label}
-                  </NavLink>
-                ))}
-                <hr className="my-2"/>
-                {user ? (
-                  <>
-                    <div className="text-sm text-gray-600 px-2">
-                      Signed in as: {user.email}
-                    </div>
-                    <Button asChild>
-                      <Link to="/add-location">Add Location</Link>
-                    </Button>
-                    <Button variant="outline" onClick={handleSignOut}>
-                      Sign Out
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <Button asChild>
-                      <Link to="/auth">Sign In</Link>
-                    </Button>
-                    <Button asChild variant="outline">
-                      <Link to="/auth">Sign Up</Link>
-                    </Button>
-                  </>
-                )}
+
+        {/* Mobile Navigation */}
+        {isMenuOpen && (
+          <div className="md:hidden py-4 border-t border-gray-200">
+            <div className="flex flex-col space-y-4">
+              {navigation.map((item) => (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  className={`text-base font-medium transition-colors hover:text-blue-600 ${
+                    isActive(item.href) ? "text-blue-600" : "text-gray-700"
+                  }`}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {item.name}
+                </Link>
+              ))}
+              <div className="pt-4 border-t border-gray-200">
+                <Button asChild variant="outline" className="w-full">
+                  <Link to="/auth" onClick={() => setIsMenuOpen(false)}>
+                    Sign In
+                  </Link>
+                </Button>
               </div>
-            </SheetContent>
-          </Sheet>
-        </div>
+            </div>
+          </div>
+        )}
       </div>
     </header>
   );

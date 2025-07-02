@@ -5,13 +5,9 @@ import { WiFiLocation } from "@/lib/types";
 import LocationDetailsModal from "@/components/LocationDetailsModal";
 import LocationsPageHeader from "@/components/LocationsPageHeader";
 import LocationsGrid from "@/components/LocationsGrid";
-import InteractiveMap from "@/components/InteractiveMap";
 import { useGeolocation } from "@/hooks/useGeolocation";
 import { useFavorites } from "@/hooks/useFavorites";
 import { calculateDistance } from "@/lib/geolocation";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MapPin, List } from "lucide-react";
 
 const Locations = () => {
   const [allLocations] = useState<WiFiLocation[]>(wifiSpots);
@@ -19,7 +15,6 @@ const Locations = () => {
   const [activeFilter, setActiveFilter] = useState("all");
   const [selectedLocation, setSelectedLocation] = useState<WiFiLocation | null>(null);
   const [isLoadingLocations, setIsLoadingLocations] = useState(false);
-  const [activeTab, setActiveTab] = useState("static");
   
   const { location, requestLocation } = useGeolocation();
   const { toggleFavorite, isFavorite } = useFavorites();
@@ -83,38 +78,11 @@ const Locations = () => {
       />
 
       <div className="container mx-auto px-6 py-8">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-6">
-            <TabsTrigger value="static" className="flex items-center gap-2">
-              <List className="w-4 h-4" />
-              Curated Locations
-            </TabsTrigger>
-            <TabsTrigger value="map" className="flex items-center gap-2">
-              <MapPin className="w-4 h-4" />
-              Live Map
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="static">
-            <LocationsGrid
-              locations={filteredLocations}
-              onLocationClick={setSelectedLocation}
-              isLoading={isLoadingLocations}
-            />
-          </TabsContent>
-
-          <TabsContent value="map">
-            <Card className="h-[600px]">
-              <CardContent className="p-0 h-full">
-                <InteractiveMap
-                  locations={filteredLocations}
-                  userLocation={location}
-                  onLocationSelect={setSelectedLocation}
-                />
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+        <LocationsGrid
+          locations={filteredLocations}
+          onLocationClick={setSelectedLocation}
+          isLoading={isLoadingLocations}
+        />
       </div>
 
       {/* Modal */}
