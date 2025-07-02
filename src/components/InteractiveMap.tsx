@@ -26,12 +26,14 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
 }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
+  const markersRef = useRef<L.Marker[]>([]);
 
   useEffect(() => {
     if (!mapRef.current) return;
 
-    // Initialize map
-    const map = L.map(mapRef.current).setView([17.6868, 83.2185], 12); // Visakhapatnam coordinates
+    // Initialize map centered on user location or default location
+    const initialCenter = userLocation ? [userLocation.latitude, userLocation.longitude] : [17.6868, 83.2185];
+    const map = L.map(mapRef.current).setView(initialCenter as [number, number], 12);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap contributors'
@@ -39,38 +41,68 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
 
     mapInstanceRef.current = map;
 
+    return () => {
+      map.remove();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!mapInstanceRef.current) return;
+
+    const map = mapInstanceRef.current;
+
+    // Clear existing markers
+    markersRef.current.forEach(marker => {
+      map.removeLayer(marker);
+    });
+    markersRef.current = [];
+
     // Add user location marker if available
     if (userLocation) {
       const userIcon = L.divIcon({
-        html: '<div style="background-color: #3b82f6; width: 12px; height: 12px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);"></div>',
+        html: '<div style="background-color: #3b82f6; width: 16px; height: 16px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);"></div>',
         className: 'user-location-marker',
-        iconSize: [18, 18],
-        iconAnchor: [9, 9]
+        iconSize: [22, 22],
+        iconAnchor: [11, 11]
       });
 
-      L.marker([userLocation.latitude, userLocation.longitude], { icon: userIcon })
+      const userMarker = L.marker([userLocation.latitude, userLocation.longitude], { icon: userIcon })
         .addTo(map)
         .bindPopup('Your Location');
+
+      markersRef.current.push(userMarker);
+
+      // Center map on user location
+      map.setView([userLocation.latitude, userLocation.longitude], 14);
     }
 
-    // Add WiFi location markers
+    // Add WiFi location markers in red
     locations.forEach(location => {
-      const markerColor = location.isFree ? '#10b981' : '#f59e0b';
       const icon = L.divIcon({
-        html: `<div style="background-color: ${markerColor}; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></div>`,
+        html: `<div style="background-color: #dc2626; width: 14px; height: 14px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>`,
         className: 'wifi-location-marker',
-        iconSize: [16, 16],
-        iconAnchor: [8, 8]
+        iconSize: [18, 18],
+        iconAnchor: [9, 9]
       });
 
       const marker = L.marker([location.latitude, location.longitude], { icon })
         .addTo(map)
         .bindPopup(`
-          <div class="p-2">
-            <h3 class="font-bold text-sm">${location.name}</h3>
-            <p class="text-xs text-gray-600">${location.address}</p>
-            <p class="text-xs ${location.isFree ? 'text-green-600' : 'text-amber-600'}">${location.isFree ? 'Free WiFi' : 'Paid WiFi'}</p>
-            <p class="text-xs">★ ${location.rating}</p>
+          <div class="p-3 min-w-[200px]">
+            <h3 class="font-bold text-sm mb-1">${location.name}</h3>
+            <p class="text-xs text-gray-600 mb-1">${location.type}</p>
+            <p class="text-xs text-gray-500 mb-2">${location.address}</p>
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-xs px-2 py-1 rounded ${location.isFree ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'}">
+                ${location.isFree ? 'Free WiFi' : 'Paid WiFi'}
+              </span>
+              <span class="text-xs text-yellow-600">
+                ★ ${location.rating}
+              </span>
+            </div>
+            <p class="text-xs text-gray-400">
+              ${location.hours || 'Hours not specified'}
+            </p>
           </div>
         `);
 
@@ -79,11 +111,16 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
           onLocationSelect(location);
         }
       });
+
+      markersRef.current.push(marker);
     });
 
-    return () => {
-      map.remove();
-    };
+    // Fit map to show all markers if we have locations
+    if (locations.length > 0) {
+      const group = new L.FeatureGroup([...markersRef.current]);
+      map.fitBounds(group.getBounds().pad(0.1));
+    }
+
   }, [locations, userLocation, onLocationSelect]);
 
   return <div ref={mapRef} className="h-full w-full rounded-xl" />;

@@ -5,14 +5,13 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
-import Index from "./pages/Index";
-import About from "./pages/About";
-import Locations from "./pages/Locations";
-import AddLocation from "./pages/AddLocation";
-import Contact from "./pages/Contact";
-import Auth from "./pages/Auth";
-import NotFound from "./pages/NotFound";
-import Layout from "./components/Layout";
+import Layout from "@/components/Layout";
+import Index from "@/pages/Index";
+import Locations from "@/pages/Locations";
+import About from "@/pages/About";
+import Contact from "@/pages/Contact";
+import Auth from "@/pages/Auth";
+import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
 
@@ -23,17 +22,16 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <Routes>
-            <Route path="/auth" element={<Auth />} />
-            <Route element={<Layout />}>
+          <Layout>
+            <Routes>
               <Route path="/" element={<Index />} />
-              <Route path="/about" element={<About />} />
               <Route path="/locations" element={<Locations />} />
-              <Route path="/add-location" element={<AddLocation />} />
+              <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
+              <Route path="/auth" element={<Auth />} />
               <Route path="*" element={<NotFound />} />
-            </Route>
-          </Routes>
+            </Routes>
+          </Layout>
         </BrowserRouter>
       </TooltipProvider>
     </AuthProvider>
